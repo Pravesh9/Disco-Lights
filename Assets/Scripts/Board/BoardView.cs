@@ -6,12 +6,9 @@ public class BoardView : MonoBehaviour
 {
     public static BoardView instance;
     public Cell Cell;
+    public CellColorInfo cellColorInfo;
 
-    public Color selectedCellColor;
-    public Color activeCellColor;
-    public Color highlightedCellColor;
-    public Color deadCellColor;
-
+    [Range(0,0.5f)]
     public float gapWidth;
 
 
@@ -30,7 +27,7 @@ public class BoardView : MonoBehaviour
             {
                 GameObject cell_obj = Instantiate(Cell.gameObject);
                 cell_obj.transform.position = new Vector3(i + (i * gapWidth), (j + (j * gapWidth))); // setting the position
-                cell_obj.GetComponent<Cell>().Initialize(new Vector2(i, j), activeCellColor); // assinging the initial color to the cell
+                cell_obj.GetComponent<Cell>().Initialize(new Vector2(i, j),cellColorInfo.activeCellColor); // assinging the initial color to the cell
                 _board.AllCells[i, j] = cell_obj.GetComponent<Cell>();//Assigning the cell into the board cell index
             }
         }
@@ -38,6 +35,10 @@ public class BoardView : MonoBehaviour
         SetGridInCentring(_board);
     }
 
+    /// <summary>
+    /// Used to set the created grid in a centric manner
+    /// </summary>
+    /// <param name="_board"></param>
     [ContextMenu("SetGridCentering")]
     private void SetGridInCentring(Board _board)
     {
