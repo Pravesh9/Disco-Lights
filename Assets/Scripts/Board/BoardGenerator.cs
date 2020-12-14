@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class BoardGenerator : MonoBehaviour
 {
+    public static BoardGenerator instance;
     [Range(2,10)]
     public int row;
     [Range(2, 10)]
     public int col;
 
-    Board board;
+    public Board board;
 
+    void Awake()
+    {
+        instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
