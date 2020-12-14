@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+
 public class Board 
 {
     public readonly int row; //Rows in a board

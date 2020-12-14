@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class BoardGenerator : MonoBehaviour
 {
+    [Range(2,10)]
     public int row;
+    [Range(2, 10)]
     public int col;
 
-    public Board board;
+    Board board;
 
 
     // Start is called before the first frame update
