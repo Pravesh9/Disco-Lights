@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
 
     public void PlayerWon()
     {
-        print("PlayerWon");
+        //print("PlayerWon");
+        DebugManager.LogWithColor("Player Won", Color.green);
         OnPlayerWon?.Invoke();
     }
 
