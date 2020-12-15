@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public float timerForDeadCells;
+    public float timerForDeadCells;//TIME between for cells from HIGHLIGHTED_COLOR to DEAD_COLOR
+
+    List<Cell> AdjacentCell; // It is used to store the all adjancent cell when a user click on any cell.
+    bool canTouch =true; //used to check can a user touch the cells or not.
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,7 +17,7 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && canTouch)
         {
             Vector2 mousPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -26,7 +30,8 @@ public class GameController : MonoBehaviour
                 if (hit.collider.GetComponent<Cell>().IsActive)
                 {
 
-                    print("Yes Something Hit");
+                    //print("Yes Something Hit");
+                    canTouch = false;
                     StartCoroutine(DeadCells(hit.collider.GetComponent<Cell>().Index));
 
                 }
@@ -38,46 +43,95 @@ public class GameController : MonoBehaviour
 
     IEnumerator DeadCells(Vector2 _index)
     {
+        AdjacentCell = new List<Cell>();
+        SetDigonalCellHighlighted(BoardGenerator.instance.board.AllCells, (int)_index.x, (int)_index.y);
         yield return new WaitForSeconds(timerForDeadCells);
-        SetDigonalCellDead(BoardGenerator.instance.board.AllCells, (int)_index.x, (int)_index.y);
+        SetDigonalCellDead();
+        canTouch = true;//Now user is able to touch the another cell
 
+        if(WiningManager.instance!=null)
+        WiningManager.instance.CheckWining(BoardGenerator.instance.board.AllCells);
     }
 
-    public  void SetDigonalCellDead(Cell[,] Cells, int row, int col)
+    void SetDigonalCellDead()
     {
-        if (row < 0 || col < 0 || row >= Cells.GetLength(0) || col >= Cells.GetLength(1)) //these are check to boundary blocks
+        foreach (var cell in AdjacentCell)
         {
-            return;
+            cell.SR.color = BoardView.instance.cellColorInfo.deadCellColor;
         }
-        if (!Cells[row, col].IsActive)
+    }
+
+    void SetDigonalCellHighlighted(Cell[,] Cells, int _row, int _col)
+    {
+
+        int row = _row;
+        int col = _col;
+
+        Cells[row, col].IsActive = false;
+        Cells[row, col].SR.color = BoardView.instance.cellColorInfo.selectedCellColor;
+        AdjacentCell.Add(Cells[row, col]);
+
+        while (true)//TopRight
         {
-            return;
+            row++;
+            col++;
+            if (!HasThisCellHighlighted(Cells, row, col))
+                break;
+        }
+        row = _row;
+        col = _col;
+        while (true)//TopLeft
+        {
+            row--;
+            col++;
+            if (!HasThisCellHighlighted(Cells, row, col))
+                break;
+        }
+        row = _row;
+        col = _col;
+        while (true)//DownLeft
+        {
+            row--;
+            col--;
+            if (!HasThisCellHighlighted(Cells, row, col))
+                break;
+        }
+        row = _row;
+        col = _col;
+        while (true)//DownRight
+        {
+            row++;
+            col--;
+            if (!HasThisCellHighlighted(Cells, row, col))
+                break;
+        }
+        
+
+    }
+        
+    bool HasThisCellHighlighted(Cell[,] Cells, int row, int col)
+    {
+        if (!IsInBoudary(Cells, row, col)) //these are check to boundary blocks
+        {
+            return false;
+        }
+        if (!Cells[row, col].IsActive) // If current cell is already dead then break the condition;
+        {
+            return false;
         }
 
         Cells[row, col].IsActive = false;
         Cells[row, col].SR.color = BoardView.instance.cellColorInfo.highlightedCellColor;
+        AdjacentCell.Add(Cells[row, col]);
+        return true;
+    }
 
-        print($"{row},{col}");
-        for (int r = row - 1; r <= row + 1; r++)
-        {
-            for (int c = col - 1; c <= col + 1; c++)
-            {
+    bool IsInBoudary(Cell[,] Cells,int row,int col)
+    {
+        if (row < 0 || col < 0 || row >= Cells.GetLength(0) || col >= Cells.GetLength(1)) //these are check to boundary blocks
+            return false;
 
-                //if take digonal(r!=row||c!=col)  and if without digonal(r==row||c==col)
-
-
-                if(r != row && c != col)
-                {
-
-                    SetDigonalCellDead(Cells, r, c);
-        
-        
-                }
-                
-            }
-
-        }
-        
+        return true;
     }
 
 }
