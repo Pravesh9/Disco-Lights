@@ -20,6 +20,12 @@ public class BoardGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (GameObject.FindObjectOfType<Data>() != null)
+        {
+            row = Data.row;
+            col = Data.col;
+        }
+
         board = new Board(row, col);
         BoardView.instance.DrawGameBoard(ref board);
     }

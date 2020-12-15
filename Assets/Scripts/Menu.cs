@@ -2,31 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 public class Menu : MonoBehaviour
 {
-    public string header;
-    public Text HeaderText;
-    public float speed;
-    // Start is called before the first frame update
-    IEnumerator Start()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(speed);
-            char[] AllChar = header.ToCharArray();
-            Color _color = Color.red;
-            _color.r = Random.Range(0.4f, 0.7f);
-            _color.g = Random.Range(0.4f, 0.7f);
-            _color.b = Random.Range(0.4f, 0.7f);
-            _color.a = 1;
+    public static Menu instance;
 
-            HeaderText.text = "<Color=#" + ColorUtility.ToHtmlStringRGBA(_color) + ">" + header + "</Color>";
-        }
+    public Slider rowSlider;
+    public Slider colSlider;
+    public Text rowText;
+    public Text colText;
+
+    void Awake() => instance = this;
+
+    public void PlayTheGame(string _sceneName)
+    {
+        Data.col = (int)colSlider.value;
+        Data.row = (int)rowSlider.value;
+        SceneManager.LoadScene(_sceneName);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnChangeValueSlider()
     {
+        rowText.text = rowSlider.value.ToString();
+        colText.text = colSlider.value.ToString();
 
     }
+
 }
+    
+    
+    
