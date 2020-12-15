@@ -4,11 +4,43 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    #region public variables
     public float timerForDeadCells;//TIME between for cells from HIGHLIGHTED_COLOR to DEAD_COLOR
+    #endregion
 
+    #region private variables
     List<Cell> AdjacentCell; // It is used to store the all adjancent cell when a user click on any cell.
     bool canTouch =true; //used to check can a user touch the cells or not.
+    #endregion
 
+    #region MonoBehaviour Method
+    private void OnEnable()
+    {
+        GameManager.OnPlayerWon += PlayerWon;
+        GameManager.OnGamePause += Pause;
+        GameManager.OnGameResume += Resume;
+    }
+    private void OnDisable()
+    {
+        GameManager.OnPlayerWon -= PlayerWon;
+        GameManager.OnGamePause -= Pause;
+        GameManager.OnGameResume -= Resume;
+    }
+
+    void Pause()
+    {
+        canTouch = false;
+    }
+
+    void Resume()
+    {
+        canTouch = true;
+    }
+
+    void PlayerWon()
+    {
+        canTouch = false;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +48,13 @@ public class GameController : MonoBehaviour
     }
 
     void Update()
+    {
+        TakeInput();
+    }
+    #endregion
+
+    #region Other Method
+    void TakeInput()
     {
         if (Input.GetMouseButtonDown(0) && canTouch)
         {
@@ -25,7 +64,7 @@ public class GameController : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(mousPos, Vector3.forward);
 
             // If it hits something...
-            if (hit.collider != null && hit.collider.GetComponent<Cell>()!=null)
+            if (hit.collider != null && hit.collider.GetComponent<Cell>() != null)
             {
                 if (hit.collider.GetComponent<Cell>().IsActive)
                 {
@@ -40,7 +79,6 @@ public class GameController : MonoBehaviour
 
         }
     }
-
     IEnumerator DeadCells(Vector2 _index)
     {
         AdjacentCell = new List<Cell>();
@@ -133,5 +171,5 @@ public class GameController : MonoBehaviour
 
         return true;
     }
-
+    #endregion
 }

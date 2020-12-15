@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    #region MonoBehaviour Mehod
     private void OnEnable()
     {
         GameManager.OnPlayerWon += PlayerWon;
@@ -12,6 +13,7 @@ public class AudioManager : MonoBehaviour
     {
         GameManager.OnPlayerWon -= PlayerWon;
     }
+    #endregion
 
     void PlayerWon() => DebugManager.LogWithColor($"{this.name}: You can add here wining sound",Color.blue); 
 
